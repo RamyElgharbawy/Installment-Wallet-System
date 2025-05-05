@@ -1,7 +1,7 @@
+const userRoute = require("./user.routes");
+
 const mountRoutes = (app) => {
-  app.use("/api/v1/categories", (req, res, next) => {
-    console.log("welcome");
-  });
+  app.use("/api/v1/users", userRoute);
 };
 
 module.exports = mountRoutes;

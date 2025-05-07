@@ -1,5 +1,3 @@
-
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -9,13 +7,21 @@ datasource db {
   url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
-        
+
+enum Role {
+  user
+  admin
+  moderator
+}
 
 model User {
-  id String @id @default(uuid())
-  name String?
-  email String @unique 
-  password String @db.VarChar(255)
+  id        String   @id @default(uuid())
+  name      String?
+  email     String   @unique
+  password  String   @db.VarChar(255)
+  role      Role     @default(user)
+  salary    Float    @default(1000)
+  netSalary Float?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

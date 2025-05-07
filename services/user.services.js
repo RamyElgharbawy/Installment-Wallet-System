@@ -1,6 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const prisma = require("../config/prisma-db");
 const ApiError = require("../utils/apiError");
+const bcrypt = require("bcrypt");
 
 // @desc      Create User Service
 // @route     POST /api/v1/users
@@ -16,7 +17,15 @@ exports.createUser = asyncHandler(async (req, res, next) => {
   }
 
   // 2- create new user
-  const user = await prisma.user.create({ data: req.body });
+  const user = await prisma.user.create({
+    data: {
+      name: req.body.name,
+      email: req.body.email,
+      password: await bcrypt.hash(req.body.password, 12),
+      role: req.body.role,
+      salary: req.body.salary,
+    },
+  });
 
   if (!user) {
     return next(new ApiError(`failed to create user`, 500));
@@ -107,8 +116,20 @@ exports.updateUser = asyncHandler(async (req, res, next) => {
   // 2- update user data
   const updatedUser = await prisma.user.update({
     where: { id: userId },
-    data: req.body,
-    select: { id: true, name: true, email: true, updatedAt: true },
+    data: {
+      name: req.body.name,
+      email: req.body.email,
+      role: req.body.role,
+      salary: req.body.salary,
+    },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      role: true,
+      salary: true,
+      updatedAt: true,
+    },
   });
 
   res.status(201).json({ data: updatedUser });
@@ -133,4 +154,34 @@ exports.deleteUser = asyncHandler(async (req, res, next) => {
   });
 
   res.status(204).send();
+});
+
+// @desc      Change User Password Service
+// @route     PUT /api/v1/user/changePassword/:id
+// @access    Private/Admin
+exports.changeUserPassword = asyncHandler(async (req, res, next) => {
+  // 1- get user
+  const user = await prisma.user.update({
+    where: { id: req.params.id },
+    data: {
+      password: await bcrypt.hash(req.body.password, 12),
+    },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      updatedAt: true,
+    },
+  });
+
+  if (!user) {
+    return next(
+      new ApiError(`there is no user for this id: ${req.params.id}`, 404)
+    );
+  }
+
+  res.status(201).json({
+    status: "Success",
+    message: "User password changed successfully",
+  });
 });

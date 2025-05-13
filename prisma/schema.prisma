@@ -14,14 +14,68 @@ enum Role {
   moderator
 }
 
+enum Type {
+  purchaseItem
+  loan
+}
+
+enum Period {
+  daily
+  weekly
+  monthly
+  annually
+}
+
 model User {
-  id        String   @id @default(uuid())
-  name      String?
-  email     String   @unique
-  password  String   @db.VarChar(255)
-  role      Role     @default(user)
-  salary    Float    @default(1000)
-  netSalary Float?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                String     @id @default(uuid())
+  name              String?
+  email             String     @unique
+  password          String     @db.VarChar(255)
+  passwordChangedAt Int?
+  role              Role       @default(user)
+  salary            Float      @default(1000)
+  netSalary         Float?
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+  items             Item[]
+  Fellow            Fellow[]
+  Spending          Spending[]
+}
+
+model Item {
+  id             Int       @id @default(autoincrement())
+  type           Type      @default(purchaseItem)
+  title          String
+  price          Float
+  purchaseDate   DateTime
+  numberOfMonths Int
+  monthlyAmount  Float?
+  startIn        DateTime
+  endIn          DateTime
+  status         DateTime?
+  notes          String?
+  owner          User      @relation(fields: [userId], references: [id])
+  userId         String
+}
+
+model Fellow {
+  id             Int      @id @default(autoincrement())
+  manager        String?
+  amount         Int
+  startIn        DateTime
+  endIn          DateTime
+  numberOfMonths Int
+  turnMonth      Int
+  owner          User     @relation(fields: [userId], references: [id])
+  userId         String
+  status         String?
+}
+
+model Spending {
+  id       Int    @id @default(autoincrement())
+  name     String
+  amount   Float
+  schedule Period @default(weekly)
+  owner    User   @relation(fields: [userId], references: [id])
+  userId   String
 }

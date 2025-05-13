@@ -5,18 +5,8 @@ const bcrypt = require("bcrypt");
 
 // @desc      Create User Service
 // @route     POST /api/v1/users
-// @access    Private
+// @access    Private/Admin-Moderator
 exports.createUser = asyncHandler(async (req, res, next) => {
-  // 1- check if user exist by email
-  const existUser = await prisma.user.findUnique({
-    where: { email: req.body.email },
-  });
-
-  if (existUser) {
-    return next(new ApiError(`Email already exist`, 400));
-  }
-
-  // 2- create new user
   const user = await prisma.user.create({
     data: {
       name: req.body.name,
@@ -35,7 +25,7 @@ exports.createUser = asyncHandler(async (req, res, next) => {
 });
 // @desc      Get All Users Service
 // @route     GET /api/v1/users
-// @access    Private
+// @access    Private/Admin-Moderator
 exports.getAllUser = asyncHandler(async (req, res, next) => {
   // pagination options
   const page = +req.query.page || 1;
@@ -43,31 +33,24 @@ exports.getAllUser = asyncHandler(async (req, res, next) => {
   const skip = (page - 1) * limit;
   const endIndex = page * limit;
 
-  // get all user count
-  const allUserCount = await prisma.user.count();
-
   // get all user data
   const users = await prisma.user.findMany({
     skip,
     take: limit,
     orderBy: { createdAt: "desc" },
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      createdAt: true,
-      updatedAt: true,
-    },
   });
 
-  if (!users) {
+  if (users.length < 1) {
     return next(new ApiError(`there is no users`, 404));
   }
+
+  // get all user count
+  const allUserCount = await prisma.user.count();
 
   // pagination result
   const pagination = {};
 
-  pagination.totalItems = allUserCount;
+  pagination.totalItems = allUserCount || 0;
   pagination.currentPage = page;
   pagination.itemsPerPage = limit;
   pagination.totalPages = Math.ceil(allUserCount / limit);
@@ -79,19 +62,12 @@ exports.getAllUser = asyncHandler(async (req, res, next) => {
 
 // @desc      Get Specific User Service
 // @route     GET /api/v1/users/:id
-// @access    Private
+// @access    Private/Admin-Moderator
 exports.getUser = asyncHandler(async (req, res, next) => {
   const userId = req.params.id;
   // 1- check if user exist
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      createdAt: true,
-      updatedAt: true,
-    },
   });
 
   if (!user) {
@@ -103,17 +79,10 @@ exports.getUser = asyncHandler(async (req, res, next) => {
 
 // @desc      Update Specific user Service
 // @route     PUT /api/v1/users/:id
-// @access    Private
+// @access    Private/Admin-Moderator
 exports.updateUser = asyncHandler(async (req, res, next) => {
   const userId = req.params.id;
-  // 1- check if user exist
-  const user = await prisma.user.findUnique({ where: { id: userId } });
 
-  if (!user) {
-    return next(new ApiError(`there is no user for this id: ${userId}`, 404));
-  }
-
-  // 2- update user data
   const updatedUser = await prisma.user.update({
     where: { id: userId },
     data: {
@@ -122,14 +91,6 @@ exports.updateUser = asyncHandler(async (req, res, next) => {
       role: req.body.role,
       salary: req.body.salary,
     },
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      role: true,
-      salary: true,
-      updatedAt: true,
-    },
   });
 
   res.status(201).json({ data: updatedUser });
@@ -137,7 +98,7 @@ exports.updateUser = asyncHandler(async (req, res, next) => {
 
 // @desc      Delete Specific user Service
 // @route     PUT /api/v1/users/:id
-// @access    Private
+// @access    Private/Admin
 exports.deleteUser = asyncHandler(async (req, res, next) => {
   const userId = req.params.id;
   // 1- check if user exist
@@ -150,7 +111,6 @@ exports.deleteUser = asyncHandler(async (req, res, next) => {
   // 2- update user data
   const deletedUser = await prisma.user.delete({
     where: { id: userId },
-    select: { id: true, name: true, email: true, updatedAt: true },
   });
 
   res.status(204).send();
@@ -158,13 +118,13 @@ exports.deleteUser = asyncHandler(async (req, res, next) => {
 
 // @desc      Change User Password Service
 // @route     PUT /api/v1/user/changePassword/:id
-// @access    Private/Admin
+// @access    Private/Admin-Moderator
 exports.changeUserPassword = asyncHandler(async (req, res, next) => {
-  // 1- get user
   const user = await prisma.user.update({
     where: { id: req.params.id },
     data: {
       password: await bcrypt.hash(req.body.password, 12),
+      passwordChangedAt: parseInt(Date.now() / 1000, 10),
     },
     select: {
       id: true,
@@ -174,14 +134,8 @@ exports.changeUserPassword = asyncHandler(async (req, res, next) => {
     },
   });
 
-  if (!user) {
-    return next(
-      new ApiError(`there is no user for this id: ${req.params.id}`, 404)
-    );
-  }
-
   res.status(201).json({
-    status: "Success",
     message: "User password changed successfully",
+    data: user,
   });
 });

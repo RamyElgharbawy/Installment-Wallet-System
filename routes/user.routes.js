@@ -6,6 +6,9 @@ const {
   getUser,
   deleteUser,
   changeUserPassword,
+  changeLoggedUserPassword,
+  updateLoggedUserData,
+  getLoggedUserData,
 } = require("../services/user.services");
 const {
   createUserValidator,
@@ -13,14 +16,26 @@ const {
   updateUserValidator,
   deleteUserValidator,
   changeUserPasswordValidator,
+  changeLoggedUserPasswordValidator,
+  updateLoggedUserValidator,
 } = require("../validator/user.validator");
 
 const authServices = require("../services/auth.services");
 
 const router = express.Router();
 
-//  protected routes
+//  protected routes [All routes under protect *]
 router.use(authServices.protect);
+
+router.put(
+  "/changeMyPassword",
+  changeLoggedUserPasswordValidator,
+  changeLoggedUserPassword
+);
+
+router.put("/updateMyData", updateLoggedUserValidator, updateLoggedUserData);
+
+router.get("/profile", getLoggedUserData, getUserValidator, getUser);
 
 router
   .route("/")

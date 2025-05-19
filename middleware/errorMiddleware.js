@@ -1,9 +1,18 @@
+const {
+  PrismaClientKnownRequestError,
+} = require("@prisma/client/runtime/library");
+
 const ApiError = require("../utils/apiError");
 
 // @desc    global error handling middleware
 const globalErrorHandling = (err, req, res, next) => {
+  // handle prisma errors
+  if (err instanceof PrismaClientKnownRequestError) {
+    return handlePrismaError(err, res);
+  }
+
   err.statusCode = err.statusCode || 500;
-  err.status = err.status || "error";
+  err.status = err.status || "Internal server error";
 
   if (process.env.NODE_ENV === "development") {
     sendErrorForDev(err, res);
@@ -45,5 +54,23 @@ const handleJwtExpiredToken = () =>
 // handle jwt malformed token error method
 const handleJwtMalformedToken = () =>
   new ApiError(`Incorrect token , Fuck you [^@^]`, 401);
+
+// @desc  prisma errors handling function
+function handlePrismaError(error, res) {
+  console.log("from error middleware", error);
+
+  switch (error.code) {
+    case "P2002":
+      return res.status(409).json({ error: "Unique constraint violation" });
+    case "P2025":
+      return res.status(404).json({ error: "Record not found" });
+    default:
+      return res.status(500).json({
+        error: "Database error",
+        code: error.code,
+        meta: error.meta,
+      });
+  }
+}
 
 module.exports = globalErrorHandling;

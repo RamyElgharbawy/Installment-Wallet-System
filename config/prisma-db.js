@@ -7,7 +7,15 @@ const prisma = new PrismaClient({
     },
   },
 
-  log: ["warn", "error"],
+  log: [
+    { level: "warn", emit: "event" },
+    { level: "error", emit: "event" },
+  ],
+});
+
+// Handle shutdown gracefully
+process.on("SIGTERM", async () => {
+  await prisma.$disconnect();
 });
 
 module.exports = prisma;

@@ -40,6 +40,8 @@ exports.createUserValidator = [
     .isNumeric()
     .withMessage("salary must be a number"),
 
+  check("role").isIn(["user", "admin", "moderator"]).default("user"),
+
   validatorMiddleware,
 ];
 
@@ -54,8 +56,8 @@ exports.deleteUserValidator = [
   check("id")
     .isUUID()
     .withMessage("Invalid User id")
-    .custom(async (id) => {
-      const user = await prisma.user.findUnique({ where: { id } });
+    .custom(async (val) => {
+      const user = await prisma.user.findUnique({ where: { id: val } });
       if (!user) {
         throw new Error(`There is no user for this id`);
       }

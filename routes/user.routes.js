@@ -22,6 +22,8 @@ const {
 
 const authServices = require("../services/auth.services");
 
+const { sanitizeUserInputs } = require("../middleware/sanitizeUserInputs");
+
 const router = express.Router();
 
 //  protected routes [All routes under protect *]
@@ -42,6 +44,7 @@ router
   .post(
     authServices.allowedTo("admin", "moderator"),
     createUserValidator,
+    sanitizeUserInputs,
     createUser
   )
   .get(authServices.allowedTo("admin", "moderator"), getAllUser);

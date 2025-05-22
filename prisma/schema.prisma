@@ -35,15 +35,15 @@ model User {
   role              Role       @default(user)
   salary            Float      @default(1000)
   netSalary         Float?
-  createdAt         DateTime   @default(now())
-  updatedAt         DateTime   @updatedAt
   items             Item[]
   Fellow            Fellow[]
   Spending          Spending[]
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
 }
 
 model Item {
-  id             Int       @id @default(autoincrement())
+  id             String    @id @default(uuid())
   type           Type      @default(purchaseItem)
   title          String
   price          Float
@@ -56,10 +56,12 @@ model Item {
   notes          String?
   owner          User      @relation(fields: [userId], references: [id])
   userId         String
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 }
 
 model Fellow {
-  id             Int      @id @default(autoincrement())
+  id             String   @id @default(uuid())
   manager        String?
   amount         Int
   startIn        DateTime
@@ -69,15 +71,19 @@ model Fellow {
   owner          User     @relation(fields: [userId], references: [id])
   userId         String
   status         String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }
 
 model Spending {
-  id       Int    @id @default(autoincrement())
-  name     String
-  amount   Float
-  schedule Period @default(weekly)
-  owner    User   @relation(fields: [userId], references: [id])
-  userId   String
+  id        String   @id @default(uuid())
+  name      String
+  amount    Float
+  schedule  Period   @default(weekly)
+  owner     User     @relation(fields: [userId], references: [id])
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model VerificationCode {

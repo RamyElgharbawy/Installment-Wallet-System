@@ -28,7 +28,7 @@ exports.createOne = (model) =>
   });
 
 // @desc      Get All Records Handler
-exports.getAll = (model, include) =>
+exports.getAll = (model, options) =>
   asyncHandler(async (req, res, next) => {
     // pagination options
     const page = +req.query.page || 1;
@@ -36,20 +36,33 @@ exports.getAll = (model, include) =>
     const skip = (page - 1) * limit;
     const endIndex = page * limit;
 
+    // check if current user id in params
+    if (req.params.id) {
+      // get only records belong to current user
+      options.where = {
+        userId: req.params.id,
+      };
+    }
     // get all record data
     const records = await prisma[model].findMany({
+      where: options.where,
       skip,
       take: limit,
       orderBy: { createdAt: "desc" },
-      include,
+      include: options.include,
     });
 
     if (records.length < 1) {
-      return next(new ApiError(`There is no records`, 404));
+      return next(new ApiError(`There is no records found`, 404));
     }
 
-    // get all user count
-    const allRecordCount = await prisma[model].count();
+    // get all records count
+    let allRecordCount;
+    if (req.params.id) {
+      allRecordCount = records.length;
+    } else {
+      allRecordCount = await prisma[model].count();
+    }
 
     // pagination result
     const pagination = {};
@@ -65,11 +78,11 @@ exports.getAll = (model, include) =>
   });
 
 // @desc      Get Record Handler
-exports.getOne = (model, include) =>
+exports.getOne = (model, options) =>
   asyncHandler(async (req, res, next) => {
     const record = await prisma[model].findUnique({
       where: { id: req.params.id },
-      include,
+      include: options.include,
     });
 
     if (!record) {
@@ -80,22 +93,22 @@ exports.getOne = (model, include) =>
   });
 
 // @desc      Update Record Handler
-exports.updateOne = (model, include) =>
+exports.updateOne = (model, options) =>
   asyncHandler(async (req, res, next) => {
-    let data = req.body;
-    if (model === "user") {
-      data = {
-        name: req.body.name,
-        email: req.body.email,
-        role: req.body.role,
-        salary: req.body.salary,
-      };
-    }
+    // filter fields to update
+    let data = {};
+    const allowedFields = options.allowedFields || Object.keys(req.body);
+
+    allowedFields.forEach((field) => {
+      if (req.body[field] !== undefined) {
+        data[field] = req.body[field];
+      }
+    });
 
     const updatedRecord = await prisma[model].update({
       where: { id: req.params.id },
       data,
-      include,
+      include: options.include,
     });
 
     if (!updatedRecord) {

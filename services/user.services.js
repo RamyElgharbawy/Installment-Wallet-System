@@ -6,11 +6,24 @@ const generateToken = require("../utils/generateToken");
 const servicesHandler = require("./servicesHandler");
 
 // @desc  includes params
-const includeItems = {
+const includeOptions = {
   items: {
     select: {
       type: true,
       status: true,
+    },
+  },
+  fellows: {
+    select: {
+      amount: true,
+      turnMonth: true,
+    },
+  },
+  spending: {
+    select: {
+      name: true,
+      amount: true,
+      schedule: true,
     },
   },
 };
@@ -23,17 +36,22 @@ exports.createUser = servicesHandler.createOne("user");
 // @desc      Get All Users Service
 // @route     GET /api/v1/users
 // @access    Private/Admin-Moderator
-exports.getAllUser = servicesHandler.getAll("user", includeItems);
+exports.getAllUser = servicesHandler.getAll("user", {
+  include: includeOptions,
+});
 
 // @desc      Get Specific User Service
 // @route     GET /api/v1/users/:id
 // @access    Private/Admin-Moderator
-exports.getUser = servicesHandler.getOne("user", includeItems);
+exports.getUser = servicesHandler.getOne("user", { include: includeOptions });
 
 // @desc      Update Specific user Service
 // @route     PUT /api/v1/users/:id
 // @access    Private/Admin-Moderator
-exports.updateUser = servicesHandler.updateOne("user", includeItems);
+exports.updateUser = servicesHandler.updateOne("user", {
+  allowedFields: ["name", "email", "role", "salary"],
+  include: includeOptions,
+});
 
 // @desc      Delete Specific user Service
 // @route     PUT /api/v1/users/:id

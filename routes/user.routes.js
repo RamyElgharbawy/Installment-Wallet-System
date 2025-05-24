@@ -22,7 +22,7 @@ const {
 
 const authServices = require("../services/auth.services");
 
-const { sanitizeUserInputs } = require("../middleware/sanitizeUserInputs");
+const { sanitizeUserInputs } = require("../middleware/sanitizeDataInputs");
 
 const router = express.Router();
 

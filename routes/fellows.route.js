@@ -1,0 +1,41 @@
+const express = require("express");
+const {
+  getAllFellows,
+  createFellow,
+  getFellow,
+  updateFellow,
+  deleteFellow,
+  getMyFellows,
+} = require("../services/fellow.services");
+
+const authServices = require("../services/auth.services");
+const { getLoggedUserData } = require("../services/user.services");
+const {
+  createFellowValidator,
+  getMyFellowsValidator,
+  getFellowValidator,
+  updateFellowValidator,
+  deleteFellowValidator,
+} = require("../validator/fellows.validator");
+const { setUserIdToBody } = require("../middleware/sanitizeDataInputs");
+
+const router = express.Router();
+
+router.use(authServices.protect);
+
+router
+  .route("/myFellows")
+  .get(getLoggedUserData, getMyFellowsValidator, getMyFellows);
+
+router
+  .route("/")
+  .get(authServices.allowedTo("admin", "moderator"), getAllFellows)
+  .post(setUserIdToBody, createFellowValidator, createFellow);
+
+router
+  .route("/:id")
+  .get(getFellowValidator, getFellow)
+  .put(updateFellowValidator, updateFellow)
+  .delete(deleteFellowValidator, deleteFellow);
+
+module.exports = router;

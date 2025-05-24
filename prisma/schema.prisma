@@ -36,8 +36,8 @@ model User {
   salary            Float      @default(1000)
   netSalary         Float?
   items             Item[]
-  Fellow            Fellow[]
-  Spending          Spending[]
+  fellows           Fellow[]
+  spending          Spending[]
   createdAt         DateTime   @default(now())
   updatedAt         DateTime   @updatedAt
 }

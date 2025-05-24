@@ -20,7 +20,6 @@ prisma.$use(async (params, next) => {
     (params.action === "create" || params.action === "update")
   ) {
     const data = params.args.data;
-    console.log(data);
 
     // calculate monthlyAmount
     data.monthlyAmount = parseFloat(

@@ -9,24 +9,29 @@ const {
 } = require("../services/item.services");
 
 const authServices = require("../services/auth.services");
-const { adjItemData } = require("../middleware/sanitizeUserInputs");
+
 const {
   createItemValidator,
   deleteItemValidator,
   getItemValidator,
   updateItemValidator,
+  getMyItemsValidator,
 } = require("../validator/items.validator");
+const { setUserIdToBody } = require("../middleware/sanitizeDataInputs");
+const { getLoggedUserData } = require("../services/user.services");
 
 const router = express.Router();
 
 router.use(authServices.protect);
 
-router.route("/myItems").get(getMyItems);
+router
+  .route("/myItems")
+  .get(getLoggedUserData, getMyItemsValidator, getMyItems);
 
 router
   .route("/")
   .get(authServices.allowedTo("admin", "moderator"), getAllItems)
-  .post(createItemValidator, createItem);
+  .post(setUserIdToBody, createItemValidator, createItem);
 
 router
   .route("/:id")

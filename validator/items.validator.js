@@ -151,3 +151,18 @@ exports.deleteItemValidator = [
     }),
   validatorMiddleware,
 ];
+
+// @desc    Get my items validator
+exports.getMyItemsValidator = [
+  check("id")
+    .isUUID()
+    .withMessage("Invalid user id")
+    .custom(async (id) => {
+      const user = await prisma.user.findUnique({ where: { id } });
+      if (!user) {
+        throw new Error(`There is no user for this id`);
+      }
+      return true;
+    }),
+  validatorMiddleware,
+];

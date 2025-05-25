@@ -76,14 +76,16 @@ model Fellow {
 }
 
 model Spending {
-  id        String   @id @default(uuid())
+  id        String    @id @default(uuid())
   name      String
   amount    Float
-  schedule  Period   @default(weekly)
-  owner     User     @relation(fields: [userId], references: [id])
+  schedule  Period    @default(monthly)
+  startIn   DateTime?
+  status    String?
+  owner     User      @relation(fields: [userId], references: [id])
   userId    String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }
 
 model VerificationCode {

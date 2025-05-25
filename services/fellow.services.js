@@ -1,7 +1,3 @@
-const asyncHandler = require("express-async-handler");
-const prisma = require("../config/prisma-db");
-const ApiError = require("../utils/apiError");
-
 const servicesHandler = require("./servicesHandler");
 
 // @desc    include owner param

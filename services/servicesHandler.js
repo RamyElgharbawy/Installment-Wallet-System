@@ -43,25 +43,22 @@ exports.getAll = (model, options) =>
         userId: req.params.id,
       };
     }
+
     // get all record data
-    const records = await prisma[model].findMany({
-      where: options.where,
-      skip,
-      take: limit,
-      orderBy: { createdAt: "desc" },
-      include: options.include,
-    });
+    const [records, allRecordCount] = await Promise.all([
+      prisma[model].findMany({
+        where: options.where,
+        skip,
+        take: limit,
+        orderBy: { createdAt: "desc" },
+        include: options.include,
+      }),
+      // get all records count
+      await prisma[model].count({ where: options.where }),
+    ]);
 
     if (records.length < 1) {
       return next(new ApiError(`There is no records found`, 404));
-    }
-
-    // get all records count
-    let allRecordCount;
-    if (req.params.id) {
-      allRecordCount = records.length;
-    } else {
-      allRecordCount = await prisma[model].count();
     }
 
     // pagination result

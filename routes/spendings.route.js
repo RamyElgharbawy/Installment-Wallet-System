@@ -1,7 +1,6 @@
 const express = require("express");
 const {
   getAllSpendings,
-  getMySpendings,
   createSpending,
   getSpending,
   updateSpending,
@@ -10,7 +9,6 @@ const {
 
 const authServices = require("../services/auth.services");
 const { getLoggedUserData } = require("../services/user.services");
-const {} = require("../validator/fellows.validator");
 const { setUserIdToBody } = require("../middleware/sanitizeDataInputs");
 const {
   createSpendingValidator,
@@ -26,7 +24,7 @@ router.use(authServices.protect);
 
 router
   .route("/mySpendings")
-  .get(getLoggedUserData, getMySpendingsValidator, getMySpendings);
+  .get(getLoggedUserData, getMySpendingsValidator, getAllSpendings);
 
 router
   .route("/")

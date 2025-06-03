@@ -11,6 +11,7 @@ const includeOptions = {
     select: {
       type: true,
       status: true,
+      monthlyAmount: true,
     },
   },
   fellows: {
@@ -43,7 +44,9 @@ exports.getAllUser = servicesHandler.getAll("user", {
 // @desc      Get Specific User Service
 // @route     GET /api/v1/users/:id
 // @access    Private/Admin-Moderator
-exports.getUser = servicesHandler.getOne("user", { include: includeOptions });
+exports.getUser = servicesHandler.getOne("user", {
+  include: includeOptions,
+});
 
 // @desc      Update Specific user Service
 // @route     PUT /api/v1/users/:id
@@ -77,8 +80,8 @@ exports.changeUserPassword = asyncHandler(async (req, res, next) => {
   });
 
   res.status(201).json({
-    message: "User password changed successfully",
-    data: user,
+    status: "Success",
+    message: `User [${user.name}], his password changed successfully`,
   });
 });
 
@@ -114,22 +117,9 @@ exports.changeLoggedUserPassword = asyncHandler(async (req, res, next) => {
 // @desc      Update Logged User Data
 // @route     PUT /api/v1/users/updateMyData
 // @access    Public/Protect
-exports.updateLoggedUserData = asyncHandler(async (req, res, next) => {
-  try {
-    const updatedUser = await prisma.user.update({
-      where: { id: req.user.id },
-
-      data: {
-        name: req.body.name,
-        email: req.body.email,
-        salary: req.body.salary,
-      },
-    });
-
-    res.status(201).json({ data: updatedUser });
-  } catch (error) {
-    return next(new ApiError(error, 404));
-  }
+exports.updateLoggedUserData = servicesHandler.updateOne("user", {
+  allowedFields: ["name", "salary", "email"],
+  include: includeOptions,
 });
 
 // @desc      Get Logged User Data Middleware

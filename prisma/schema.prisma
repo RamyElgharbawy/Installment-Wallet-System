@@ -98,3 +98,13 @@ model VerificationCode {
 
   @@index([email])
 }
+
+model InstallmentFees {
+  id                   String   @id @default(uuid())
+  bankName             String
+  period               Int
+  purchasingPercentage Float
+  cashPercentage       Float
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+}

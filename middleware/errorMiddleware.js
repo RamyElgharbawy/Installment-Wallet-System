@@ -57,8 +57,6 @@ const handleJwtMalformedToken = () =>
 
 // @desc  prisma errors handling function
 function handlePrismaError(error, res) {
-  console.log("from error middleware", error);
-
   switch (error.code) {
     case "P2002":
       return res.status(409).json({ error: "Unique constraint violation" });

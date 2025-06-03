@@ -35,7 +35,12 @@ router.put(
   changeLoggedUserPassword
 );
 
-router.put("/updateMyData", updateLoggedUserValidator, updateLoggedUserData);
+router.put(
+  "/updateMyData",
+  getLoggedUserData,
+  updateLoggedUserValidator,
+  updateLoggedUserData
+);
 
 router.get("/profile", getLoggedUserData, getUserValidator, getUser);
 

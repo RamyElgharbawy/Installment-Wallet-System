@@ -2,6 +2,7 @@ const asyncHandler = require("express-async-handler");
 const prisma = require("../config/prisma-db");
 const ApiError = require("../utils/apiError");
 const bcrypt = require("bcrypt");
+const { calculateNetSalary } = require("../utils/netSalaryCalculation");
 
 // @desc      Create Record Handler
 exports.createOne = (model) =>
@@ -85,6 +86,10 @@ exports.getOne = (model, options) =>
     if (!record) {
       return next(new ApiError("Record not found", 404));
     }
+    // calculate netSalary if model = user
+    if (model === "user") {
+      record.netSalary = calculateNetSalary(record) || 0;
+    }
 
     res.status(200).json({ data: record });
   });
@@ -101,7 +106,7 @@ exports.updateOne = (model, options) =>
         data[field] = req.body[field];
       }
     });
-
+    // execute update
     const updatedRecord = await prisma[model].update({
       where: { id: req.params.id },
       data,

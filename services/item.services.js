@@ -52,8 +52,3 @@ exports.updateItem = servicesHandler.updateOne("item", {
 // @route     DEL /api/v1/items/:id
 // @access    Public - Protected
 exports.deleteItem = servicesHandler.deleteOne("item");
-
-// @desc      Get My Items Service
-// @route     DEL /api/v1/items/myItems
-// @access    Public - Protected
-exports.getMyItems = servicesHandler.getAll("item", { include: includeOwner });

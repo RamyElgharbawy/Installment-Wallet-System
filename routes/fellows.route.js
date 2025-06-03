@@ -5,7 +5,6 @@ const {
   getFellow,
   updateFellow,
   deleteFellow,
-  getMyFellows,
 } = require("../services/fellow.services");
 
 const authServices = require("../services/auth.services");
@@ -25,7 +24,7 @@ router.use(authServices.protect);
 
 router
   .route("/myFellows")
-  .get(getLoggedUserData, getMyFellowsValidator, getMyFellows);
+  .get(getLoggedUserData, getMyFellowsValidator, getAllFellows);
 
 router
   .route("/")

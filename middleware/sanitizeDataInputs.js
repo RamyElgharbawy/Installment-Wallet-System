@@ -7,7 +7,7 @@ exports.sanitizeUserInputs = (req, res, next) => {
   next();
 };
 
-// @desc  set userId to body
+// @desc  set userId to body from logged user data
 exports.setUserIdToBody = (req, res, next) => {
   if (!req.body.userId) {
     req.body.userId = req.user.id;

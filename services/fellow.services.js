@@ -47,10 +47,3 @@ exports.updateFellow = servicesHandler.updateOne("fellow", {
 // @route     DEL /api/v1/fellows/:id
 // @access    Public - Protected
 exports.deleteFellow = servicesHandler.deleteOne("fellow");
-
-// @desc      Get My Fellows Service
-// @route     DEL /api/v1/fellows/myFellows
-// @access    Public - Protected
-exports.getMyFellows = servicesHandler.getAll("fellow", {
-  include: includeOwner,
-});

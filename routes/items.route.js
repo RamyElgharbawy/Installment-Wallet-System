@@ -5,7 +5,6 @@ const {
   getItem,
   updateItem,
   deleteItem,
-  getMyItems,
 } = require("../services/item.services");
 
 const authServices = require("../services/auth.services");
@@ -26,7 +25,7 @@ router.use(authServices.protect);
 
 router
   .route("/myItems")
-  .get(getLoggedUserData, getMyItemsValidator, getMyItems);
+  .get(getLoggedUserData, getMyItemsValidator, getAllItems);
 
 router
   .route("/")

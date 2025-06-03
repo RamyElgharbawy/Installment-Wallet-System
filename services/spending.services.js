@@ -41,10 +41,3 @@ exports.updateSpending = servicesHandler.updateOne("spending", {
 // @route     DEL /api/v1/spendings/:id
 // @access    Public - Protected
 exports.deleteSpending = servicesHandler.deleteOne("spending");
-
-// @desc      Get My Spendings Service
-// @route     DEL /api/v1/spendings/mySpendings
-// @access    Public - Protected
-exports.getMySpendings = servicesHandler.getAll("spending", {
-  include: includeOwner,
-});

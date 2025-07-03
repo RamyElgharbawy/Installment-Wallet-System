@@ -7,6 +7,13 @@ const includeOwner = {
       name: true,
     },
   },
+  shares: {
+    select: {
+      amount: true,
+      dueDate: true,
+      payStatus: true,
+    },
+  },
 };
 
 // @desc      Create Fellow Service

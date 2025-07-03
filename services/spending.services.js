@@ -17,7 +17,6 @@ exports.createSpending = servicesHandler.createOne("spending");
 // @desc      Get All Spendings Service
 // @route     GET /api/v1/spendings
 // @access    Private - Protected [admin - moderator]
-
 exports.getAllSpendings = servicesHandler.getAll("spending", {
   include: includeOwner,
 });

@@ -61,7 +61,7 @@ function handlePrismaError(error, res) {
     case "P2002":
       return res.status(409).json({ error: "Unique constraint violation" });
     case "P2025":
-      return res.status(404).json({ error: "Record not found" });
+    // return res.status(404).json({error: "Database error", message: "Record not found" });
     default:
       return res.status(500).json({
         error: "Database error",

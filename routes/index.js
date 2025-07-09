@@ -4,6 +4,7 @@ const itemsRoute = require("./items.route");
 const fellowsRoute = require("./fellows.route");
 const spendingsRoute = require("./spendings.route");
 const bankFeesRoute = require("./bankFees.route");
+const sharesRoute = require("./shares.routes");
 
 const mountRoutes = (app) => {
   app.use("/api/v1/users", userRoute);
@@ -12,6 +13,7 @@ const mountRoutes = (app) => {
   app.use("/api/v1/fellows", fellowsRoute);
   app.use("/api/v1/spendings", spendingsRoute);
   app.use("/api/v1/installmentFees", bankFeesRoute);
+  app.use("/api/v1/shares", sharesRoute);
 };
 
 module.exports = mountRoutes;

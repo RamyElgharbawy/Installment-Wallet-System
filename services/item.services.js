@@ -23,14 +23,18 @@ exports.createItem = servicesHandler.createOne("item");
 
 // @desc      Get All items Service
 // @route     GET /api/v1/items
+// @route     GET /api/v1/myItems
 // @access    Private - Protected [admin - moderator]
-
-exports.getAllItems = servicesHandler.getAll("item", { include: includeOwner });
+exports.getAllItems = servicesHandler.getAll("item", {
+  defaultInclude: includeOwner,
+});
 
 // @desc      Get Specific Item Service
 // @route     GET /api/v1/items/:id
 // @access    Public - Protected
-exports.getItem = servicesHandler.getOne("item", { include: includeOwner });
+exports.getItem = servicesHandler.getOne("item", {
+  defaultInclude: includeOwner,
+});
 
 // @desc      Update Specific Item Service
 // @route     PUT /api/v1/items/:id
@@ -48,7 +52,7 @@ exports.updateItem = servicesHandler.updateOne("item", {
     "status",
     "notes",
   ],
-  include: includeOwner,
+  defaultInclude: includeOwner,
 });
 
 // @desc      Delete Specific Item Service

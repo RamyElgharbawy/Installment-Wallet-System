@@ -29,36 +29,60 @@ exports.createOne = (model) =>
   });
 
 // @desc      Get All Records Handler
-exports.getAll = (model, options) =>
+exports.getAll = (model, options = {}) =>
   asyncHandler(async (req, res, next) => {
+    const {
+      defaultWhere = {},
+      defaultInclude = {},
+      ownerField = "userId",
+      sort = { field: "createdAt", order: "desc" },
+    } = options;
+
     // pagination options
     const page = +req.query.page || 1;
-    const limit = +req.query.limit || 10;
+    const limit = +req.query.limit || 50;
     const skip = (page - 1) * limit;
     const endIndex = page * limit;
 
-    // check if current user id in params
-    if (req.params.id) {
-      // get only records belong to current user
-      options.where = {
-        userId: req.params.id,
-      };
+    // build default where
+    const where = { ...defaultWhere };
+
+    // check record ownership
+    if (req.params[ownerField]) {
+      where[ownerField] = req.params[ownerField];
+    }
+
+    // check shares parent
+    let parentType = "";
+    if (req.params.fellowId) {
+      parentType = "fellowId";
+      where[parentType] = req.params.fellowId;
+    } else if (req.params.itemId) {
+      parentType = "itemId";
+      where[parentType] = req.params.itemId;
+    }
+
+    // Apply search filter
+    if (req.query.search) {
+      where.OR = [
+        // { amount: { contains: req.query.search, mode: "insensitive" } },
+      ];
     }
 
     // get all record data
     const [records, allRecordCount] = await Promise.all([
       prisma[model].findMany({
-        where: options.where,
+        where,
         skip,
         take: limit,
-        orderBy: { createdAt: "desc" },
-        include: options.include,
+        orderBy: { [sort.field]: sort.order },
+        include: defaultInclude,
       }),
       // get all records count
-      await prisma[model].count({ where: options.where }),
+      prisma[model].count({ where }),
     ]);
 
-    if (records.length < 1) {
+    if (records.length === 0) {
       return next(new ApiError(`There is no records found`, 404));
     }
 
@@ -72,7 +96,9 @@ exports.getAll = (model, options) =>
     pagination.prevPage = skip > 0 ? page - 1 : null;
     pagination.nextPage = endIndex < allRecordCount ? page + 1 : null;
 
-    res.status(200).json({ pagination, data: records });
+    res
+      .status(200)
+      .json({ results: pagination.totalItems, pagination, data: records });
   });
 
 // @desc      Get Record Handler

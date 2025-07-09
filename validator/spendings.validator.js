@@ -115,7 +115,7 @@ exports.deleteSpendingValidator = [
 
 // @desc    Get my spendings validator
 exports.getMySpendingsValidator = [
-  check("id")
+  check("userId")
     .isUUID()
     .withMessage("Invalid user id")
     .custom(async (id) => {

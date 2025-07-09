@@ -18,14 +18,14 @@ exports.createSpending = servicesHandler.createOne("spending");
 // @route     GET /api/v1/spendings
 // @access    Private - Protected [admin - moderator]
 exports.getAllSpendings = servicesHandler.getAll("spending", {
-  include: includeOwner,
+  defaultInclude: includeOwner,
 });
 
 // @desc      Get Specific Spending Service
 // @route     GET /api/v1/spendings/:id
 // @access    Public - Protected
 exports.getSpending = servicesHandler.getOne("spending", {
-  include: includeOwner,
+  defaultInclude: includeOwner,
 });
 
 // @desc      Update Specific Spending Service
@@ -33,7 +33,7 @@ exports.getSpending = servicesHandler.getOne("spending", {
 // @access    Public - Protected
 exports.updateSpending = servicesHandler.updateOne("spending", {
   allowedFields: ["name", "amount", "schedule", "startIn", "status"],
-  include: includeOwner,
+  defaultInclude: includeOwner,
 });
 
 // @desc      Delete Specific Spending Service

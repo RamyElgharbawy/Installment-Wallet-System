@@ -1,4 +1,6 @@
 const express = require("express");
+const router = express.Router();
+
 const {
   getAllFellows,
   createFellow,
@@ -18,7 +20,10 @@ const {
 } = require("../validator/fellows.validator");
 const { setUserIdToBody } = require("../middleware/sanitizeDataInputs");
 
-const router = express.Router();
+const sharesRoute = require("./shares.routes");
+
+// nested route
+router.use("/:fellowId/shares", sharesRoute);
 
 router.use(authServices.protect);
 

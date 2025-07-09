@@ -127,6 +127,6 @@ exports.updateLoggedUserData = servicesHandler.updateOne("user", {
 // @access    Public/Protect
 exports.getLoggedUserData = asyncHandler(async (req, res, next) => {
   // get user id from user object in logged user response and inject it into params
-  req.params.id = req.user.id;
+  req.params.userId = req.user.id;
   next();
 });

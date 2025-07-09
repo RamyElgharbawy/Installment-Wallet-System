@@ -23,16 +23,18 @@ exports.createFellow = servicesHandler.createOne("fellow");
 
 // @desc      Get All Fellows Service
 // @route     GET /api/v1/fellows
-// @access    Private - Protected [admin - moderator]
-
+// @route     GET /api/v1/myFellows
+// @access    Public - Protected
 exports.getAllFellows = servicesHandler.getAll("fellow", {
-  include: includeOwner,
+  defaultInclude: includeOwner,
 });
 
 // @desc      Get Specific Fellow Service
 // @route     GET /api/v1/fellows/:id
 // @access    Public - Protected
-exports.getFellow = servicesHandler.getOne("fellow", { include: includeOwner });
+exports.getFellow = servicesHandler.getOne("fellow", {
+  defaultInclude: includeOwner,
+});
 
 // @desc      Update Specific Fellow Service
 // @route     PUT /api/v1/fellows/:id
@@ -47,7 +49,7 @@ exports.updateFellow = servicesHandler.updateOne("fellow", {
     "turnMonth",
     "status",
   ],
-  include: includeOwner,
+  defaultInclude: includeOwner,
 });
 
 // @desc      Delete Specific Fellow Service

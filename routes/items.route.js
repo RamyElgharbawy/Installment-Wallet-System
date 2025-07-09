@@ -1,4 +1,9 @@
 const express = require("express");
+
+const router = express.Router();
+
+const sharesRoute = require("./shares.routes");
+
 const {
   getAllItems,
   createItem,
@@ -19,7 +24,8 @@ const {
 const { setUserIdToBody } = require("../middleware/sanitizeDataInputs");
 const { getLoggedUserData } = require("../services/user.services");
 
-const router = express.Router();
+// nested route
+router.use("/:itemId/shares", sharesRoute);
 
 router.use(authServices.protect);
 

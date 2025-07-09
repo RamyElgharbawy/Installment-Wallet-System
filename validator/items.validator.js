@@ -130,7 +130,7 @@ exports.getItemValidator = [
         throw new Error(`There is no item for this id`);
       } else if (item.userId !== req.user.id) {
         // check item owner
-        throw new Error(`You are not allowed to perform this action`);
+        throw new Error(`this fellow not belong to this user`);
       }
       return true;
     }),
@@ -154,7 +154,7 @@ exports.deleteItemValidator = [
 
 // @desc    Get my items validator
 exports.getMyItemsValidator = [
-  check("id")
+  check("userId")
     .isUUID()
     .withMessage("Invalid user id")
     .custom(async (id) => {

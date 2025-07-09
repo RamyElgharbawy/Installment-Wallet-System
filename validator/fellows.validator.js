@@ -122,7 +122,7 @@ exports.getFellowValidator = [
         throw new Error(`There is no fellow for this id`);
       } else if (fellow.userId !== req.user.id) {
         // check fellow owner
-        throw new Error(`You are not allowed to perform this action`);
+        throw new Error(`this fellow not belong to this user`);
       }
       return true;
     }),
@@ -146,7 +146,7 @@ exports.deleteFellowValidator = [
 
 // @desc    Get my fellows validator
 exports.getMyFellowsValidator = [
-  check("id")
+  check("userId")
     .isUUID()
     .withMessage("Invalid user id")
     .custom(async (id) => {

@@ -26,6 +26,11 @@ enum Period {
   annually
 }
 
+enum Status {
+  remaining
+  completed
+}
+
 model User {
   id                String     @id @default(uuid())
   name              String?
@@ -43,8 +48,8 @@ model User {
 }
 
 model Item {
-  id             String    @id @default(uuid())
-  type           Type      @default(purchaseItem)
+  id             String   @id @default(uuid())
+  type           Type     @default(purchaseItem)
   title          String
   price          Float
   purchaseDate   DateTime
@@ -53,12 +58,12 @@ model Item {
   startIn        DateTime
   endIn          DateTime
   shares         Share[]
-  status         DateTime?
+  status         Status?  @default(remaining)
   notes          String?
-  owner          User      @relation(fields: [userId], references: [id])
+  owner          User     @relation(fields: [userId], references: [id])
   userId         String
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }
 
 model Fellow {
@@ -72,7 +77,7 @@ model Fellow {
   shares         Share[]
   owner          User     @relation(fields: [userId], references: [id])
   userId         String
-  status         String?
+  status         Status?  @default(remaining)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 }
@@ -83,7 +88,7 @@ model Spending {
   amount    Float
   schedule  Period    @default(monthly)
   startIn   DateTime?
-  status    String?
+  status    Status?   @default(remaining)
   owner     User      @relation(fields: [userId], references: [id])
   userId    String
   createdAt DateTime  @default(now())
@@ -117,9 +122,9 @@ model Share {
   dueDate   DateTime
   payDate   DateTime? @default(now())
   payStatus Boolean   @default(false)
-  Fellow    Fellow?   @relation(fields: [fellowId], references: [id])
+  Fellow    Fellow?   @relation(fields: [fellowId], references: [id], onDelete: Cascade)
   fellowId  String?
-  Item      Item?     @relation(fields: [itemId], references: [id])
+  Item      Item?     @relation(fields: [itemId], references: [id], onDelete: Cascade)
   itemId    String?
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt

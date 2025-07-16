@@ -1,9 +1,9 @@
 const express = require("express");
 
 const cors = require("cors");
-const dotenv = require("dotenv");
 const morgan = require("morgan");
 const { rateLimit } = require("express-rate-limit");
+const hpp = require("hpp");
 
 const globalErrorHandling = require("./middleware/errorMiddleware");
 const ApiError = require("./utils/apiError");

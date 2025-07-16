@@ -14,3 +14,11 @@ exports.setUserIdToBody = (req, res, next) => {
   }
   next();
 };
+
+// @desc  set userId to Params from logged user data
+exports.setUserIdToParams = (req, res, next) => {
+  if (!req.params.userId) {
+    req.params.userId = req.user.id;
+  }
+  next();
+};

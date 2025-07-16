@@ -33,7 +33,7 @@ exports.getAllItems = servicesHandler.getAll("item", {
 // @route     GET /api/v1/items/:id
 // @access    Public - Protected
 exports.getItem = servicesHandler.getOne("item", {
-  defaultInclude: includeOwner,
+  include: includeOwner,
 });
 
 // @desc      Update Specific Item Service
@@ -52,7 +52,7 @@ exports.updateItem = servicesHandler.updateOne("item", {
     "status",
     "notes",
   ],
-  defaultInclude: includeOwner,
+  include: includeOwner,
 });
 
 // @desc      Delete Specific Item Service

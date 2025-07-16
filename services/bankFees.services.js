@@ -18,9 +18,7 @@ exports.getPercentage = serviceHandler.getOne("installmentFees", {
 // @desc      Get All Percentage Service
 // @route     GET /api/v1/installmentFees
 // @access    Private[admin-moderator]
-exports.getAllPercentage = serviceHandler.getAll("installmentFees", {
-  where: {},
-});
+exports.getAllPercentage = serviceHandler.getAll("installmentFees");
 
 // @desc      Update Specific Percentage Service
 // @route     PUT /api/v1/installmentFees/:id

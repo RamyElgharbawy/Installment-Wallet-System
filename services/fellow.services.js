@@ -33,7 +33,7 @@ exports.getAllFellows = servicesHandler.getAll("fellow", {
 // @route     GET /api/v1/fellows/:id
 // @access    Public - Protected
 exports.getFellow = servicesHandler.getOne("fellow", {
-  defaultInclude: includeOwner,
+  include: includeOwner,
 });
 
 // @desc      Update Specific Fellow Service
@@ -49,7 +49,7 @@ exports.updateFellow = servicesHandler.updateOne("fellow", {
     "turnMonth",
     "status",
   ],
-  defaultInclude: includeOwner,
+  include: includeOwner,
 });
 
 // @desc      Delete Specific Fellow Service

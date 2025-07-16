@@ -49,14 +49,43 @@ const prisma = new PrismaClient({
           });
         }
 
+        // reCreate shares after update item
+        if (
+          operation === "update" &&
+          args.data.numberOfMonths &&
+          args.data.startIn
+        ) {
+          // delete old shares data
+          await prisma.share.deleteMany({
+            where: { itemId: args.data.id },
+          });
+
+          // create new shares with current new data
+          await createMonthlyShares({
+            parentId: result.id,
+            parentType: "ITEM",
+            numberOfMonths: args.data.numberOfMonths,
+            monthlyAmount: args.data.monthlyAmount,
+            startDate: new Date(args.data.startIn),
+            startFromNextMonth: true,
+          });
+        }
+
         return result;
       },
+
+      //TODO: handle update shares after update fellow startDate || numberOfMonths
     },
     fellow: {
-      async create({ args, query }) {
+      async $allOperations({ args, query, operation }) {
         const result = await query(args);
 
-        if (args.data.numberOfMonths && args.data.startIn) {
+        // create shares after fellow creation
+        if (
+          operation === "create" &&
+          args.data.numberOfMonths &&
+          args.data.startIn
+        ) {
           await createMonthlyShares({
             parentId: result.id,
             parentType: "FELLOW",
@@ -67,6 +96,48 @@ const prisma = new PrismaClient({
             startDate: new Date(args.data.startIn),
             startFromNextMonth: false,
           });
+        }
+
+        // update shares data after fellow update
+        if (
+          operation === "update" &&
+          (args.data.amount !== undefined ||
+            args.data.numberOfMonths !== undefined ||
+            args.data.startIn !== undefined)
+        ) {
+          // get fellow data
+          const fellow = await prisma.fellow.findUnique({
+            where: { id: args.where.id },
+          });
+
+          if (fellow) {
+            // delete old shares data
+            await prisma.share.deleteMany({
+              where: { fellowId: fellow.id },
+            });
+
+            // handle fellow data
+            const numberOfMonths =
+              args.data.numberOfMonths !== undefined
+                ? args.data.numberOfMonths
+                : fellow.numberOfMonths;
+            const amount =
+              args.data.amount !== undefined ? args.data.amount : fellow.amount;
+            const startIn =
+              args.data.startIn !== undefined
+                ? args.data.startIn
+                : fellow.startIn;
+
+            // create new shares with current new data
+            await createMonthlyShares({
+              parentId: fellow.id,
+              parentType: "FELLOW",
+              numberOfMonths,
+              monthlyAmount: parseFloat((amount / numberOfMonths).toFixed(2)),
+              startDate: new Date(startIn),
+              startFromNextMonth: false,
+            });
+          }
         }
 
         return result;

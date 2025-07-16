@@ -10,7 +10,7 @@ exports.createSpendingValidator = [
     .withMessage("Spending amount required")
     .isNumeric()
     .withMessage("Amount must be a number")
-    .isInt({ gt: 0 })
+    .isFloat({ gt: 0 })
     .withMessage("Amount must be positive number")
     .isLength({ max: 10 })
     .withMessage("Too long Amount"),

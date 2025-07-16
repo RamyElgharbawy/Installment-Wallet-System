@@ -25,7 +25,7 @@ exports.getAllSpendings = servicesHandler.getAll("spending", {
 // @route     GET /api/v1/spendings/:id
 // @access    Public - Protected
 exports.getSpending = servicesHandler.getOne("spending", {
-  defaultInclude: includeOwner,
+  include: includeOwner,
 });
 
 // @desc      Update Specific Spending Service
@@ -33,7 +33,7 @@ exports.getSpending = servicesHandler.getOne("spending", {
 // @access    Public - Protected
 exports.updateSpending = servicesHandler.updateOne("spending", {
   allowedFields: ["name", "amount", "schedule", "startIn", "status"],
-  defaultInclude: includeOwner,
+  include: includeOwner,
 });
 
 // @desc      Delete Specific Spending Service

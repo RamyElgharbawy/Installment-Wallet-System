@@ -10,7 +10,7 @@ const {
 } = require("../services/fellow.services");
 
 const authServices = require("../services/auth.services");
-const { getLoggedUserData } = require("../services/user.services");
+
 const {
   createFellowValidator,
   getMyFellowsValidator,
@@ -18,7 +18,10 @@ const {
   updateFellowValidator,
   deleteFellowValidator,
 } = require("../validator/fellows.validator");
-const { setUserIdToBody } = require("../middleware/sanitizeDataInputs");
+const {
+  setUserIdToBody,
+  setUserIdToParams,
+} = require("../middleware/sanitizeDataInputs");
 
 const sharesRoute = require("./shares.routes");
 
@@ -29,7 +32,7 @@ router.use(authServices.protect);
 
 router
   .route("/myFellows")
-  .get(getLoggedUserData, getMyFellowsValidator, getAllFellows);
+  .get(setUserIdToParams, getMyFellowsValidator, getAllFellows);
 
 router
   .route("/")

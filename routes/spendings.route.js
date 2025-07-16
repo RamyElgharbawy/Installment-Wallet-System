@@ -8,8 +8,11 @@ const {
 } = require("../services/spending.services");
 
 const authServices = require("../services/auth.services");
-const { getLoggedUserData } = require("../services/user.services");
-const { setUserIdToBody } = require("../middleware/sanitizeDataInputs");
+
+const {
+  setUserIdToBody,
+  setUserIdToParams,
+} = require("../middleware/sanitizeDataInputs");
 const {
   createSpendingValidator,
   getMySpendingsValidator,
@@ -24,7 +27,7 @@ router.use(authServices.protect);
 
 router
   .route("/mySpendings")
-  .get(getLoggedUserData, getMySpendingsValidator, getAllSpendings);
+  .get(setUserIdToParams, getMySpendingsValidator, getAllSpendings);
 
 router
   .route("/")

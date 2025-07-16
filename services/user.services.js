@@ -38,7 +38,7 @@ exports.createUser = servicesHandler.createOne("user");
 // @route     GET /api/v1/users
 // @access    Private/Admin-Moderator
 exports.getAllUser = servicesHandler.getAll("user", {
-  include: includeOptions,
+  defaultInclude: includeOptions,
 });
 
 // @desc      Get Specific User Service
@@ -109,9 +109,11 @@ exports.changeLoggedUserPassword = asyncHandler(async (req, res, next) => {
 
   const token = generateToken(user.id);
 
-  res
-    .status(200)
-    .json({ message: "Your Password changed successfully", token });
+  res.status(200).json({
+    status: "Success",
+    message: "Your Password changed successfully",
+    token,
+  });
 });
 
 // @desc      Update Logged User Data
@@ -127,6 +129,6 @@ exports.updateLoggedUserData = servicesHandler.updateOne("user", {
 // @access    Public/Protect
 exports.getLoggedUserData = asyncHandler(async (req, res, next) => {
   // get user id from user object in logged user response and inject it into params
-  req.params.userId = req.user.id;
+  req.params.id = req.user.id;
   next();
 });

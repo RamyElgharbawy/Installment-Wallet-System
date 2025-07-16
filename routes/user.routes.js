@@ -1,4 +1,6 @@
 const express = require("express");
+const router = express.Router();
+
 const {
   createUser,
   updateUser,
@@ -23,8 +25,6 @@ const {
 const authServices = require("../services/auth.services");
 
 const { sanitizeUserInputs } = require("../middleware/sanitizeDataInputs");
-
-const router = express.Router();
 
 //  protected routes [All routes under protect *]
 router.use(authServices.protect);

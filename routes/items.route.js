@@ -21,8 +21,10 @@ const {
   updateItemValidator,
   getMyItemsValidator,
 } = require("../validator/items.validator");
-const { setUserIdToBody } = require("../middleware/sanitizeDataInputs");
-const { getLoggedUserData } = require("../services/user.services");
+const {
+  setUserIdToBody,
+  setUserIdToParams,
+} = require("../middleware/sanitizeDataInputs");
 
 // nested route
 router.use("/:itemId/shares", sharesRoute);
@@ -31,7 +33,7 @@ router.use(authServices.protect);
 
 router
   .route("/myItems")
-  .get(getLoggedUserData, getMyItemsValidator, getAllItems);
+  .get(setUserIdToParams, getMyItemsValidator, getAllItems);
 
 router
   .route("/")

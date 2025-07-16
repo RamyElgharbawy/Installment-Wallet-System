@@ -86,6 +86,13 @@ exports.getAll = (model, options = {}) =>
       return next(new ApiError(`There is no records found`, 404));
     }
 
+    // calculate netSalary if model = user
+    if (model === "user") {
+      records.map((record) => {
+        record.netSalary = calculateNetSalary(record) || 0;
+      });
+    }
+
     // pagination result
     const pagination = {};
 

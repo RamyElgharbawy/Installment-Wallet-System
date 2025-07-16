@@ -3,6 +3,7 @@ const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const morgan = require("morgan");
+const { rateLimit } = require("express-rate-limit");
 
 const globalErrorHandling = require("./middleware/errorMiddleware");
 const ApiError = require("./utils/apiError");
@@ -16,13 +17,27 @@ app.use(cors());
 app.options(/(.*)/, cors());
 
 // parsing json from body
-app.use(express.json());
+app.use(express.json({ limit: "20kb" }));
 
 // log http requests
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
   console.log(`mode: ${process.env.NODE_ENV}`);
 }
+
+// Limit each IP to 100 requests per `window` (here, per 15 minutes)
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  limit: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: "Too Many Requests please try again after 15 min",
+});
+
+app.use("/api/v1/auth", limiter);
+
+// Http parameter pollution prevent
+app.use(hpp({ whitelist: ["dueDate"] }));
 
 // Mount Routes
 mountRoutes(app);

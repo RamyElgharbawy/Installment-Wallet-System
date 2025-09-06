@@ -33,11 +33,7 @@ exports.signupValidator = [
 
   check("passwordConfirm").notEmpty().withMessage("confirm password required"),
 
-  check("salary")
-    .notEmpty()
-    .withMessage("Salary Required")
-    .isNumeric()
-    .withMessage("salary must be a number"),
+  check("salary").optional().isNumeric().withMessage("salary must be a number"),
 
   ,
   validatorMiddleware,

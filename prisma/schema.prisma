@@ -38,7 +38,7 @@ model User {
   password          String     @db.VarChar(255)
   passwordChangedAt Int?
   role              Role       @default(user)
-  salary            Float      @default(1000)
+  salary            Float?      @default(1000)
   netSalary         Float?
   items             Item[]
   fellows           Fellow[]
